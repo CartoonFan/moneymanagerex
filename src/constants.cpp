@@ -40,10 +40,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *************************************************************************/
 const int mmex::version::Major = 1;
 const int mmex::version::Minor = 3;
-const int mmex::version::Patch = 5;
+const int mmex::version::Patch = 6;
 const int mmex::version::Alpha = -1;
 const int mmex::version::Beta  = -1;
-const int mmex::version::RC    = -1;
+const int mmex::version::RC    = 1;
 
 const wxString mmex::version::string = mmex::version::generateProgramVersion(mmex::version::Major, mmex::version::Minor, mmex::version::Patch
     ,mmex::version::Alpha, mmex::version::Beta, mmex::version::RC);
@@ -103,7 +103,14 @@ const wxString mmex::getProgramName()
 }
 const wxString mmex::getTitleProgramVersion()
 {
-    return wxString::Format("%s", mmex::version::string);
+    const wxString architecture =
+#if defined(_WIN64) || defined(__x86_64__)
+        "64-bit";
+#else
+        "";
+#endif
+
+    return wxString::Format("%s %s", mmex::version::string, architecture);
 }
 
 const wxString mmex::getProgramCopyright()

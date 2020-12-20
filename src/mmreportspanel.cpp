@@ -104,6 +104,9 @@ bool mmReportsPanel::Create(wxWindow *parent, wxWindowID winid
 
     saveReportText();
 
+    int id = rb_->getReportId();
+    this->SetLabel(id < 0 ? "Custom Report" : rb_->getReportTitle(false));
+
     Model_Usage::instance().pageview(this);
 
     return TRUE;
@@ -352,7 +355,6 @@ void mmReportsPanel::CreateControls()
 
     browser_ = wxWebView::New(this, mmID_BROWSER);
     browser_->RegisterHandler(wxSharedPtr<wxWebViewHandler>(new wxWebViewFSHandler("memory")));
-
     Bind(wxEVT_WEBVIEW_NEWWINDOW, &mmReportsPanel::OnNewWindow, this, browser_->GetId());
 
     itemBoxSizer2->Add(browser_, 1, wxGROW | wxALL, 1);
@@ -438,7 +440,7 @@ void mmReportsPanel::OnNewWindow(wxWebViewEvent& evt)
     const wxString uri = evt.GetURL();
     wxString sData;
 
-    wxRegEx pattern(R"(^https?:\/\/)");
+    wxRegEx pattern(R"(^(https?:)|(file:)\/\/)");
     if (pattern.Matches(uri))
     {
         wxLaunchDefaultBrowser(uri);

@@ -56,7 +56,7 @@ void  mmReportCategoryExpenses::RefreshData()
     int groupID = 1;
     for (const auto& category : Model_Category::instance().all(Model_Category::COL_CATEGNAME))
     {
-        const wxString& sCategName = category.CATEGNAME;
+        const wxString& sCategName = wxGetTranslation(category.CATEGNAME);
         double amt = categoryStats[category.CATEGID][-1][0];
         if (type_ == COME && amt < 0.0) amt = 0;
         if (type_ == GOES && amt > 0.0) amt = 0;
@@ -214,26 +214,19 @@ wxString mmReportCategoryExpenses::getHTMLText()
 }
 
 mmReportCategoryExpensesGoes::mmReportCategoryExpensesGoes()
-    : mmReportCategoryExpenses(_("Where the Money Goes"), TYPE::GOES)
+    : mmReportCategoryExpenses(wxTRANSLATE("Where the Money Goes"), TYPE::GOES)
 {
     setReportParameters(Reports::WheretheMoneyGoes);
 }
 
 mmReportCategoryExpensesComes::mmReportCategoryExpensesComes()
-    : mmReportCategoryExpenses(_("Where the Money Comes From"), TYPE::COME)
+    : mmReportCategoryExpenses(wxTRANSLATE("Where the Money Comes From"), TYPE::COME)
 {
     setReportParameters(Reports::WheretheMoneyComesFrom);
 }
 
-mmReportCategorySummary::mmReportCategorySummary()
-    : mmReportCategoryExpenses(_("Summary"), TYPE::SUMMARY)
-{
-    m_chart_selection = 1;
-    setReportParameters(Reports::CategoriesSummary);
-}
-
 mmReportCategoryExpensesCategories::mmReportCategoryExpensesCategories()
-    : mmReportCategoryExpenses(_("Monthly"), TYPE::MONTHLY)
+    : mmReportCategoryExpenses(wxTRANSLATE("Categories Summary"), TYPE::MONTHLY)
 {
     m_chart_selection = 1;
     setReportParameters(Reports::CategoriesMonthly);
@@ -242,7 +235,7 @@ mmReportCategoryExpensesCategories::mmReportCategoryExpensesCategories()
 //----------------------------------------------------------------------------
 
 mmReportCategoryOverTimePerformance::mmReportCategoryOverTimePerformance()
-    : mmPrintableBase(_("Category Income/Expenses"))
+    : mmPrintableBase(wxTRANSLATE("Category Income/Expenses"))
 {
     m_date_range = new mmLast12Months();
     setReportParameters(Reports::CategoryOverTimePerformance);
@@ -281,7 +274,7 @@ wxString mmReportCategoryOverTimePerformance::getHTMLText()
     for (const auto& category : Model_Category::instance().all(Model_Category::COL_CATEGNAME))
     {
         int categID = category.CATEGID;
-        line.name = category.CATEGNAME;
+        line.name = wxGetTranslation(category.CATEGNAME);
         line.overall = 0;
         unsigned month = 0;
         for (const auto &i : categoryStats[categID][-1])
@@ -298,7 +291,7 @@ wxString mmReportCategoryOverTimePerformance::getHTMLText()
         for (const auto& sub_category : Model_Category::sub_category(category))
         {
             int subcategID = sub_category.SUBCATEGID;
-            line.name = category.CATEGNAME + " : " + sub_category.SUBCATEGNAME;
+            line.name = Model_Category::full_name(category.CATEGID, sub_category.SUBCATEGID);
             line.overall = 0;
             month = 0;
             for (const auto &i : categoryStats[categID][subcategID])

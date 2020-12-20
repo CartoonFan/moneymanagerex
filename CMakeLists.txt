@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+﻿cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 # ---------------------------------------------------------------------------
 # MMEX uses semantic versioning Ref: http://semver.org
@@ -17,10 +17,10 @@ cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 # ./resources/mmex.rc
 # ---------------------------------------------------------------------------
 
-set(MMEX_VERSION 1.3.5)
+set(MMEX_VERSION 1.3.6)
 SET(MMEX_VERSION_ALPHA -1)
 SET(MMEX_VERSION_BETA -1)
-SET(MMEX_VERSION_RC -1)
+SET(MMEX_VERSION_RC 1)
 
 # ---------------------------------------------------------------------------
 
@@ -111,6 +111,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
                 set(LINUX_DISTRO "${CMAKE_MATCH_1}")
                 set(LINUX_DISTRO_REL ${CMAKE_MATCH_2})
             endif()
+        elseif(EXISTS /etc/arch-release)            
+            execute_process(COMMAND  uname -r
+                OUTPUT_VARIABLE LINUX_DISTRO_REL
+                OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+            set(LINUX_DISTRO "Arch") 	             
         else()
             message(SEND_ERROR "lsb_release tool not found.")
         endif()
@@ -169,6 +174,8 @@ endif()
 if(MSVC)
     # using Visual Studio C++
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    # use multicore
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL AppleClang)
     # force libc++, not libstdc++ for Xcode 10
     # https://developer.apple.com/documentation/xcode_release_notes/xcode_10_release_notes#3035631
